@@ -12,6 +12,7 @@ import {
 } from './chatUtils';
 
 import ChatIcon from '../../assets/icons/paper-plane.svg';
+import MicIcon from '../../assets/icons/mic.svg';
 
 import './Chat.css';
 import {
@@ -37,10 +38,12 @@ interface IChatProps {
   state: any;
   disableScrollToBottom: boolean;
   messageHistory: IMessage[] | string;
-  parse?: (message: string) => void;
+  parse?: (message: string, image: any) => void;
   actions?: object;
   messageContainerRef: React.MutableRefObject<HTMLDivElement>;
 }
+
+
 
 const Chat = ({
   state,
@@ -64,7 +67,7 @@ const Chat = ({
   const { messages } = state;
 
   const [input, setInputValue] = useState('');
-
+  const [imageFile, setImageFile] = useState<any>(null)
   const scrollIntoView = () => {
     setTimeout(() => {
       if (messageContainerRef.current) {
@@ -223,21 +226,20 @@ const Chat = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
     if (validator && typeof validator === 'function') {
       if (validator(input)) {
         handleValidMessage();
         if (parse) {
-          return parse(input);
+          return parse(input, imageFile);
         }
-        messageParser.parse(input);
+        messageParser.parse(input, imageFile);
       }
     } else {
       handleValidMessage();
       if (parse) {
-        return parse(input);
+        return parse(input, imageFile);
       }
-      messageParser.parse(input);
+      messageParser.parse(input, imageFile);
     }
   };
 
@@ -265,7 +267,94 @@ const Chat = ({
   if (placeholderText) {
     placeholder = placeholderText;
   }
+  const [isImageSelectButtonVisible, setIsImageSelectButtonVisible] = useState(false);
 
+  const handleFileChange = (event: any) => {
+    event.stopPropagation()
+    const file = event.target.files[0];
+    if (file) {
+      console.log('Selected file:', file);
+      setImageFile(file)
+    }
+  };
+  const handleButtonClick = (e: any) => {
+    e.stopPropagation()
+    document.getElementById('imageInput').click();
+  };
+
+  const checkAppSetting = () => {
+    const storedValue = localStorage.getItem('app-setting');
+    if (storedValue) {
+      const appSetting = JSON.parse(storedValue);
+      if (appSetting.url === 'http://localhost:8092/v1/gpt/ask/vision') {
+        setIsImageSelectButtonVisible(true);
+      } else {
+        setIsImageSelectButtonVisible(false); // Hide button if the condition is not met
+      }
+    }
+  };
+  useEffect(() => {
+    checkAppSetting();
+    window.addEventListener('storage', checkAppSetting);
+    return () => {
+      window.removeEventListener('storage', checkAppSetting);
+    };
+  }, []);
+  const [isListening, setIsListening] = useState(false);
+  const [transcript, setTranscript] = useState('');
+  const [isSupported, setIsSupported] = useState(false);
+  
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (SpeechRecognition) {
+        setIsSupported(true);
+      }
+    }
+  }, []);
+  const handleMicClick = () => {
+    if (!isSupported) {
+      alert('Speech recognition is not supported in this browser.');
+      return;
+    }
+    try {
+      // Get the SpeechRecognition object from the window (with webkit fallback)
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      
+      if (!SpeechRecognition) {
+        throw new Error('Speech recognition is not supported by this browser.');
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      if (!isListening) {
+        setIsListening(true);
+        recognition.start();
+      }
+
+      recognition.onresult = (event: any) => {
+        const speechResult = event.results[0][0].transcript;
+        setTranscript(speechResult);
+        setInputValue(speechResult)
+        setIsListening(false);
+      };
+
+      recognition.onerror = (event: any) => {
+        console.error('Error occurred in recognition:', event.error);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+    } catch (error) {
+      console.error('Speech recognition error:', error);
+    }
+  };
   return (
     <div className="react-chatbot-kit-chat-container">
       <div className="react-chatbot-kit-chat-inner-container">
@@ -299,23 +388,41 @@ const Chat = ({
         </div>
 
         <div className="react-chatbot-kit-chat-input-container">
-          <form
+          <div
             className="react-chatbot-kit-chat-input-form"
-            onSubmit={handleSubmit}
+            
           >
+            <MicIcon className="react-chatbot-kit-mic-icon" onClick={handleMicClick}/>
             <input
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
               value={input}
               onChange={(e) => setInputValue(e.target.value)}
             />
+            <>
+            
+            {isImageSelectButtonVisible && <button
+              className="react-chatbot-kit-select-image"
+              onClick={handleButtonClick}
+            >
+              {imageFile && imageFile.name.slice(20) || "Select Image" }
+            </button>}
+            <input
+              type="file"
+              id="imageInput"
+              style={{ display: 'none' }}
+              accept="image/*"
+              onChange={handleFileChange}
+            />
+            </>
             <button
               className="react-chatbot-kit-chat-btn-send"
               style={customButtonStyle}
+              onClick={handleSubmit}
             >
               <ChatIcon className="react-chatbot-kit-chat-btn-send-icon" />
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </div>
