@@ -303,7 +303,7 @@ const Chat = ({
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isSupported, setIsSupported] = useState(false);
-  
+  const [chatBtnDisabled, setChatBtnDisabled] = useState(false)
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
@@ -355,6 +355,19 @@ const Chat = ({
       console.error('Speech recognition error:', error);
     }
   };
+  const isChatBtnDisabled = ()=> {
+    if(isImageSelectButtonVisible && !imageFile && input.length < 1){
+        return true
+    }
+    if (input.length < 1)
+        return true
+    return false
+  }
+
+  useEffect(()=> {
+    const disabled = isChatBtnDisabled()
+    setChatBtnDisabled(disabled)
+  }, [isImageSelectButtonVisible, imageFile, input])
   return (
     <div className="react-chatbot-kit-chat-container">
       <div className="react-chatbot-kit-chat-inner-container">
@@ -417,8 +430,9 @@ const Chat = ({
             </>
             <button
               className="react-chatbot-kit-chat-btn-send"
-              style={customButtonStyle}
+              style={{...customButtonStyle, backgroundColor: chatBtnDisabled ? "grey" : "#2898ec" }}
               onClick={handleSubmit}
+              disabled={chatBtnDisabled}
             >
               <ChatIcon className="react-chatbot-kit-chat-btn-send-icon" />
             </button>
