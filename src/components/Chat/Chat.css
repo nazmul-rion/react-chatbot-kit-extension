@@ -79,6 +79,7 @@
   border: none;
   color: #fff;
   border-bottom-right-radius: 5px;
+  margin-right: 2px;
 }
 
 .react-chatbot-kit-chat-btn-send-icon {

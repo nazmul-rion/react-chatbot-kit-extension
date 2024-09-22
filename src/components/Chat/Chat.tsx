@@ -13,6 +13,7 @@ import {
 
 import ChatIcon from '../../assets/icons/paper-plane.svg';
 import MicIcon from '../../assets/icons/mic.svg';
+import FileIcon from '../../assets/icons/file.svg';
 
 import './Chat.css';
 import {
@@ -38,7 +39,7 @@ interface IChatProps {
   state: any;
   disableScrollToBottom: boolean;
   messageHistory: IMessage[] | string;
-  parse?: (message: string, image: any) => void;
+  parse?: (message: string, image?: any, audioFile?: any) => void;
   actions?: object;
   messageContainerRef: React.MutableRefObject<HTMLDivElement>;
 }
@@ -68,6 +69,7 @@ const Chat = ({
 
   const [input, setInputValue] = useState('');
   const [imageFile, setImageFile] = useState<any>(null)
+  const [selectedAudioFile, setSelectedAudioFile] = useState<any>(null)
   const scrollIntoView = () => {
     setTimeout(() => {
       if (messageContainerRef.current) {
@@ -230,16 +232,16 @@ const Chat = ({
       if (validator(input)) {
         handleValidMessage();
         if (parse) {
-          return parse(input, imageFile);
+          return parse(input, imageFile, selectedAudioFile);
         }
-        messageParser.parse(input, imageFile);
+        messageParser.parse(input, imageFile, selectedAudioFile);
       }
     } else {
       handleValidMessage();
       if (parse) {
-        return parse(input, imageFile);
+        return parse(input, imageFile, selectedAudioFile);
       }
-      messageParser.parse(input, imageFile);
+      messageParser.parse(input, imageFile, selectedAudioFile);
     }
   };
 
@@ -368,6 +370,18 @@ const Chat = ({
     const disabled = isChatBtnDisabled()
     setChatBtnDisabled(disabled)
   }, [isImageSelectButtonVisible, imageFile, input])
+  
+  const handleAudioFileChange = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      setSelectedAudioFile(file);
+    }
+  };
+  const handleAudioButtonClick = () => {
+    const fileInput = document.getElementById('fileInput');
+    fileInput.click();
+  };
+
   return (
     <div className="react-chatbot-kit-chat-container">
       <div className="react-chatbot-kit-chat-inner-container">
@@ -406,6 +420,18 @@ const Chat = ({
             
           >
             <MicIcon className="react-chatbot-kit-mic-icon" onClick={handleMicClick}/>
+            {
+            !isImageSelectButtonVisible && 
+            <FileIcon className="react-chatbot-kit-mic-icon" onClick={handleAudioButtonClick}/>
+            }
+            <input
+              type="file"
+              id="fileInput"
+              style={{ display: 'none' }}
+              accept=".mp3, .mp4, .mpeg, .mpga, .m4a, .wav, .webm, .x-m4a"
+              onChange={handleAudioFileChange}
+            />
+            <span>{selectedAudioFile && selectedAudioFile.name.slice(0,20)}</span>
             <input
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
@@ -418,7 +444,7 @@ const Chat = ({
               className="react-chatbot-kit-select-image"
               onClick={handleButtonClick}
             >
-              {imageFile && imageFile.name.slice(20) || "Select Image" }
+              {imageFile && imageFile.name.slice(0,20) || "Select Image" }
             </button>}
             <input
               type="file"
