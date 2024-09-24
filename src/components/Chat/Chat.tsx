@@ -108,7 +108,7 @@ const Chat = ({
       if (userMessage(messageObject)) {
         return (
           <React.Fragment key={messageObject.id}>
-            {renderUserMessage(messageObject)}
+            {renderUserMessage({...messageObject, image: state.image, audioFile: state.audioFile})}
           </React.Fragment>
         );
       }
@@ -160,12 +160,15 @@ const Chat = ({
       payload: messageObject.payload,
       actions,
     });
+
     return (
       <>
         <UserChatMessage
           message={messageObject.message}
           key={messageObject.id}
           customComponents={customComponents}
+          image={messageObject.image}
+          audioFile={messageObject.audioFile}
         />
         {widget ? widget : null}
       </>
@@ -253,6 +256,8 @@ const Chat = ({
 
     scrollIntoView();
     setInputValue('');
+    setImageFile(null)
+    setSelectedAudioFile(null)
   };
 
   const customButtonStyle = { backgroundColor: '' };
@@ -275,7 +280,6 @@ const Chat = ({
     event.stopPropagation()
     const file = event.target.files[0];
     if (file) {
-      console.log('Selected file:', file);
       setImageFile(file)
     }
   };
@@ -290,6 +294,7 @@ const Chat = ({
       const appSetting = JSON.parse(storedValue);
       if (appSetting.url === 'http://localhost:8092/v1/gpt/ask/vision') {
         setIsImageSelectButtonVisible(true);
+        setSelectedAudioFile(null)
       } else {
         setIsImageSelectButtonVisible(false); // Hide button if the condition is not met
       }
@@ -358,10 +363,13 @@ const Chat = ({
     }
   };
   const isChatBtnDisabled = ()=> {
-    if(isImageSelectButtonVisible && !imageFile && input.length < 1){
-        return true
+    if(isImageSelectButtonVisible){
+        if(!imageFile || input.length < 1)
+          return true
+        else
+          return false
     }
-    if (input.length < 1)
+    else if (input.length < 1)
         return true
     return false
   }
@@ -381,6 +389,21 @@ const Chat = ({
     const fileInput = document.getElementById('fileInput');
     fileInput.click();
   };
+  const [listeningTxt, setListeningTxt] = useState("Listening ...")
+
+  useEffect(() => {
+    let intervalId: any;
+  
+    if (isListening) {
+      intervalId = setInterval(() => {
+        setListeningTxt(prev => prev === "Listening ..." ? "Listening .." : "Listening ...");
+      }, 400); // Increased the interval to avoid excessive updates
+    } 
+  
+    return () => {
+      clearInterval(intervalId); // Ensure interval is cleared when `isListening` becomes false or component unmounts
+    };
+  }, [isListening]);
 
   return (
     <div className="react-chatbot-kit-chat-container">
@@ -419,10 +442,15 @@ const Chat = ({
             className="react-chatbot-kit-chat-input-form"
             
           >
-            <MicIcon className="react-chatbot-kit-mic-icon" onClick={handleMicClick}/>
+            
+              <>
+                {!isListening && <MicIcon className="react-chatbot-kit-mic-icon" onClick={handleMicClick}/>}
+                {isListening && <p style={{width: "120px", marginLeft: "10px"}}>{listeningTxt}</p>}
+              </>
+            
             {
             !isImageSelectButtonVisible && 
-            <FileIcon className="react-chatbot-kit-mic-icon" onClick={handleAudioButtonClick}/>
+            <FileIcon className="react-chatbot-kit-file-icon" onClick={handleAudioButtonClick}/>
             }
             <input
               type="file"
@@ -431,7 +459,7 @@ const Chat = ({
               accept=".mp3, .mp4, .mpeg, .mpga, .m4a, .wav, .webm, .x-m4a"
               onChange={handleAudioFileChange}
             />
-            <span>{selectedAudioFile && selectedAudioFile.name.slice(0,20)}</span>
+            <span>{selectedAudioFile && `${selectedAudioFile.name.slice(0,20)}.${selectedAudioFile.name.split('.').pop()}`}</span>
             <input
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
@@ -444,7 +472,7 @@ const Chat = ({
               className="react-chatbot-kit-select-image"
               onClick={handleButtonClick}
             >
-              {imageFile && imageFile.name.slice(0,20) || "Select Image" }
+              {(imageFile && `${imageFile.name.slice(0,20)}.${imageFile.name.split('.').pop()}`) || "Select Image" }
             </button>}
             <input
               type="file"
@@ -456,7 +484,7 @@ const Chat = ({
             </>
             <button
               className="react-chatbot-kit-chat-btn-send"
-              style={{...customButtonStyle, backgroundColor: chatBtnDisabled ? "grey" : "#2898ec" }}
+              style={{...customButtonStyle, backgroundColor: chatBtnDisabled ? "grey" : "rgb(0, 74, 173)", height: "100%" }}
               onClick={handleSubmit}
               disabled={chatBtnDisabled}
             >

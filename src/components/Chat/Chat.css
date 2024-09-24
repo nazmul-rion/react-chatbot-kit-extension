@@ -49,6 +49,7 @@
   width: 100%;
   display: flex;
   border-top: 1px solid #d8d8d8;
+  align-items: center;
 }
 
 .react-chatbot-kit-chat-input::placeholder {
@@ -68,14 +69,24 @@
   border: none;
   color: black;
   border-bottom-right-radius: 5px;
-  margin-top: 7px;
+  margin-left: 10px;
+  cursor: pointer;
+}
+.react-chatbot-kit-file-icon {
+  width: 32px;
+  height: 32px;
+  border: none;
+  color: black;
+  border-bottom-right-radius: 5px;
+  margin-top: 6px;
   margin-left: 10px;
   cursor: pointer;
 }
 
 .react-chatbot-kit-select-image {
   background-color: grey;
-  width: 100px;
+  width: 160px;
+  height: 100%;
   border: none;
   color: #fff;
   border-bottom-right-radius: 5px;

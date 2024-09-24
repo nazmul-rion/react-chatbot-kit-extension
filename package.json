@@ -1,12 +1,13 @@
 {
-  "name": "react-chatbot-kit",
+  "name": "react-chatbot-kit-for-gpt4-vision",
   "version": "2.2.0",
   "homepage": "https://fredrikoseberg.github.io/react-chatbot-kit-docs/",
   "description": "Fully customizable chatbot kit for react.",
   "main": "build/index.js",
   "types": "build/src/index.d.ts",
   "dependencies": {
-    "react-conditionally-render": "^1.0.2"
+    "react-conditionally-render": "^1.0.2",
+    "yarn": "^1.22.22"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
