@@ -282,6 +282,7 @@ const Chat = ({
     if (file) {
       setImageFile(file)
     }
+    event.target.value = null;
   };
   const handleButtonClick = (e: any) => {
     e.stopPropagation()
@@ -292,7 +293,7 @@ const Chat = ({
     const storedValue = localStorage.getItem('app-setting');
     if (storedValue) {
       const appSetting = JSON.parse(storedValue);
-      if (appSetting.url.includes("ask/vision")) {
+      if (appSetting.url && appSetting.url.includes("ask/vision")) {
         setIsImageSelectButtonVisible(true);
         setSelectedAudioFile(null)
       } else {
@@ -384,6 +385,7 @@ const Chat = ({
     if (file) {
       setSelectedAudioFile(file);
     }
+    event.target.value = null;
   };
   const handleAudioButtonClick = () => {
     const fileInput = document.getElementById('fileInput');
@@ -459,7 +461,7 @@ const Chat = ({
               accept=".mp3, .mp4, .mpeg, .mpga, .m4a, .wav, .webm, .x-m4a"
               onChange={handleAudioFileChange}
             />
-            <span>{selectedAudioFile && `${selectedAudioFile.name.slice(0,20)}.${selectedAudioFile.name.split('.').pop()}`}</span>
+            <span>{selectedAudioFile && (selectedAudioFile.name.length > 20 ? `${selectedAudioFile.name.slice(0,20)}.${selectedAudioFile.name.split('.').pop()}`: selectedAudioFile.name)}</span>
             <input
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
@@ -472,7 +474,7 @@ const Chat = ({
               className="react-chatbot-kit-select-image"
               onClick={handleButtonClick}
             >
-              {(imageFile && `${imageFile.name.slice(0,20)}.${imageFile.name.split('.').pop()}`) || "Select Image" }
+              {(imageFile && (imageFile.name.length > 20 ? `${imageFile.name.slice(0,20)}.${imageFile.name.split('.').pop()}` : imageFile.name)) || "Select Image" }
             </button>}
             <input
               type="file"
