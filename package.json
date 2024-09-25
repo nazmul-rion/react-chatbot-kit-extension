@@ -1,6 +1,9 @@
 {
   "name": "@gigalogy/react-chatbot-kit-extension",
   "version": "2.2.1",
+  "publishConfig": {
+    "access": "public"
+  },
   "homepage": "https://fredrikoseberg.github.io/react-chatbot-kit-docs/",
   "description": "Fully customizable chatbot kit for react.",
   "main": "build/index.js",
