@@ -293,7 +293,7 @@ const Chat = ({
     const storedValue = localStorage.getItem('app-setting');
     if (storedValue) {
       const appSetting = JSON.parse(storedValue);
-      if (appSetting.url.includes("ask/vision")) {
+      if (appSetting.url && appSetting.url.includes("ask/vision")) {
         setIsImageSelectButtonVisible(true);
         setSelectedAudioFile(null)
       } else {
