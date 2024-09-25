@@ -292,7 +292,7 @@ const Chat = ({
     const storedValue = localStorage.getItem('app-setting');
     if (storedValue) {
       const appSetting = JSON.parse(storedValue);
-      if (appSetting.url === 'http://localhost:8092/v1/gpt/ask/vision') {
+      if (appSetting.url.includes("ask/vision")) {
         setIsImageSelectButtonVisible(true);
         setSelectedAudioFile(null)
       } else {
