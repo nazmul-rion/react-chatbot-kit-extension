@@ -1,6 +1,6 @@
 {
   "name": "react-chatbot-kit-for-gpt4-vision",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "homepage": "https://fredrikoseberg.github.io/react-chatbot-kit-docs/",
   "description": "Fully customizable chatbot kit for react.",
   "main": "build/index.js",
@@ -34,6 +34,6 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FredrikOseberg/react-chatbot-kit"
+    "url": "https://github.com/gigalogy/react-chatbot-kit-extension"
   }
 }
