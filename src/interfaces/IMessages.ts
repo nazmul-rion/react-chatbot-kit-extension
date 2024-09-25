@@ -1,5 +1,7 @@
 export interface IBaseMessage {
   message: string;
+  image?: any;
+  audioFile?: any;
   type: string;
   id: number;
 }

@@ -11,11 +11,15 @@ import { ICustomComponents } from '../../interfaces/IConfig';
 interface IUserChatMessageProps {
   message: string;
   customComponents: ICustomComponents;
+  image: any;
+  audioFile: any;
 }
 
 const UserChatMessage = ({
   message,
   customComponents,
+  image,
+  audioFile
 }: IUserChatMessageProps) => {
   return (
     <div className="react-chatbot-kit-user-chat-message-container">
@@ -23,6 +27,8 @@ const UserChatMessage = ({
         condition={!!customComponents.userChatMessage}
         show={callIfExists(customComponents.userChatMessage, {
           message,
+          image,
+          audioFile
         })}
         elseShow={
           <div className="react-chatbot-kit-user-chat-message">

@@ -1,12 +1,13 @@
 {
-  "name": "react-chatbot-kit",
-  "version": "2.2.0",
+  "name": "react-chatbot-kit-extension",
+  "version": "2.2.1",
   "homepage": "https://fredrikoseberg.github.io/react-chatbot-kit-docs/",
   "description": "Fully customizable chatbot kit for react.",
   "main": "build/index.js",
   "types": "build/src/index.d.ts",
   "dependencies": {
-    "react-conditionally-render": "^1.0.2"
+    "react-conditionally-render": "^1.0.2",
+    "yarn": "^1.22.22"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -26,13 +27,13 @@
     "style-loader": "^1.1.3",
     "ts-loader": "^9.2.5",
     "typescript": "^4.4.3",
-    "webpack": "5.53.0",
+    "webpack": "5.76.0",
     "webpack-cli": "4.8.0",
     "webpack-node-externals": "^2.5.2"
   },
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/FredrikOseberg/react-chatbot-kit"
+    "url": "https://github.com/gigalogy/react-chatbot-kit-extension"
   }
 }
