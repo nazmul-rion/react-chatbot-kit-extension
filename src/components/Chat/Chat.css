@@ -41,7 +41,7 @@
   padding: 12.5px;
   border: none;
   font-size: 0.85rem;
-  
+  padding-top: 32px;
   border-bottom-left-radius: 5px;
 }
 
@@ -50,6 +50,13 @@
   display: flex;
   border-top: 1px solid #d8d8d8;
   align-items: center;
+}
+.microphone-audio-wrapper{
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
 }
 
 .react-chatbot-kit-chat-input::placeholder {
@@ -64,13 +71,14 @@
   border-bottom-right-radius: 5px;
 }
 .react-chatbot-kit-mic-icon {
-  width: 32px;
+  width: 37px;
   height: 32px;
   border: none;
   color: black;
   border-bottom-right-radius: 5px;
   margin-left: 10px;
   cursor: pointer;
+  height: 25px;
 }
 .react-chatbot-kit-file-icon {
   width: 32px;
