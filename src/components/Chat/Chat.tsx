@@ -288,7 +288,7 @@ const Chat = ({
     e.stopPropagation()
     document.getElementById('imageInput').click();
   };
-
+  const [chatBtnForceDisable, setChatBtnForceDisable] = useState(false)
   const checkAppSetting = () => {
     const storedValue = localStorage.getItem('app-setting');
     if (storedValue) {
@@ -306,6 +306,23 @@ const Chat = ({
     window.addEventListener('storage', checkAppSetting);
     return () => {
       window.removeEventListener('storage', checkAppSetting);
+    };
+  }, []);
+  const checkChatBtnDisable = ()=> {
+    const storedValue = localStorage.getItem('app-setting');
+    if (storedValue) {
+      const appSetting = JSON.parse(storedValue);
+      if(appSetting.sendBtnDisable){
+          setChatBtnForceDisable(true)
+      } else 
+      setChatBtnForceDisable(false)
+    }
+  }
+  useEffect(() => {
+  
+    window.addEventListener('app-setting-update', checkChatBtnDisable);
+    return () => {
+      window.removeEventListener('app-setting-update', checkChatBtnDisable);
     };
   }, []);
   const [isListening, setIsListening] = useState(false);
@@ -376,9 +393,13 @@ const Chat = ({
   }
 
   useEffect(()=> {
-    const disabled = isChatBtnDisabled()
-    setChatBtnDisabled(disabled)
-  }, [isImageSelectButtonVisible, imageFile, input])
+    if(chatBtnForceDisable){
+        setChatBtnDisabled(true)
+    } else {
+      const disabled = isChatBtnDisabled()
+      setChatBtnDisabled(disabled)
+    }
+  }, [isImageSelectButtonVisible, imageFile, input, chatBtnForceDisable])
   
   const handleAudioFileChange = (event: any) => {
     const file = event.target.files[0];
@@ -399,7 +420,7 @@ const Chat = ({
     if (isListening) {
       intervalId = setInterval(() => {
         setListeningTxt(prev => prev === "Listening ..." ? "Listening .." : "Listening ...");
-      }, 400); // Increased the interval to avoid excessive updates
+      }, 400); 
     } 
   
     return () => {
@@ -462,12 +483,14 @@ const Chat = ({
               onChange={handleAudioFileChange}
             />
             <span>{selectedAudioFile && (selectedAudioFile.name.length > 20 ? `${selectedAudioFile.name.slice(0,20)}.${selectedAudioFile.name.split('.').pop()}`: selectedAudioFile.name)}</span>
-            <input
+            <textarea
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
               value={input}
               onChange={(e) => setInputValue(e.target.value)}
-            />
+            >
+            </textarea>
+
             <>
             
             {isImageSelectButtonVisible && <button
