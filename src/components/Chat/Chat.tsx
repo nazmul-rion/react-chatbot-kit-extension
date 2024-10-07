@@ -465,7 +465,9 @@ const Chat = ({
             className="react-chatbot-kit-chat-input-form"
             
           >
-            
+              <div className='microphone-audio-wrapper'>
+
+              
               <>
                 {!isListening && <MicIcon className="react-chatbot-kit-mic-icon" onClick={handleMicClick}/>}
                 {isListening && <p style={{width: "120px", marginLeft: "10px"}}>{listeningTxt}</p>}
@@ -483,6 +485,7 @@ const Chat = ({
               onChange={handleAudioFileChange}
             />
             <span>{selectedAudioFile && (selectedAudioFile.name.length > 20 ? `${selectedAudioFile.name.slice(0,20)}.${selectedAudioFile.name.split('.').pop()}`: selectedAudioFile.name)}</span>
+            </div>
             <textarea
               className="react-chatbot-kit-chat-input"
               placeholder={placeholder}
