@@ -72,13 +72,12 @@
 }
 .react-chatbot-kit-mic-icon {
   width: 37px;
-  height: 32px;
   border: none;
   color: black;
   border-bottom-right-radius: 5px;
   margin-left: 10px;
   cursor: pointer;
-  height: 25px;
+  height: 22px;
 }
 .react-chatbot-kit-file-icon {
   width: 32px;
