@@ -56,13 +56,14 @@ const useChatbot = ({
 
   const initialState = getInitialState(config);
 
-  if (messageHistory && Array.isArray(messageHistory)) {
-    config.initialMessages = [...messageHistory];
-  } else if (typeof messageHistory === 'string' && Boolean(messageHistory)) {
-    if (!runInitialMessagesWithHistory) {
-      config.initialMessages = [];
+  useEffect(() => {
+    if (messageHistory && Array.isArray(messageHistory)) {
+      setState((prevState: any) => ({
+        ...prevState,
+        messages: messageHistory,
+      }));
     }
-  }
+  } , [messageHistory]);
 
   const [state, setState] = React.useState({
     messages: [...config.initialMessages],
